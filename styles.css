@@ -199,6 +199,7 @@
     margin: 0 4px;
     align-self: center;
   }
+  .top-nav-sep-push { margin-left: auto; }
 
   /* ── FILTER BAR ── */
   .filter-wrap {
