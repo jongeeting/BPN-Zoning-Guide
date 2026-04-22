@@ -1,0 +1,43 @@
+# ═════════════════════════════════════════════════════════════════════
+# BPN Zoning Guide — Netlify configuration
+#
+# This is a plain static HTML site (no build step). Uploaded via the
+# Netlify dashboard (drag-and-drop) or via `netlify deploy --prod`.
+# ═════════════════════════════════════════════════════════════════════
+
+[build]
+  # No build command — publish the root directory as-is.
+  publish = "."
+
+# ─────────────────────────────────────────────────────────────────────
+# Clean URLs: let readers share /who-decides-what without the .html.
+# Netlify's pretty-URL support handles this automatically when enabled.
+# ─────────────────────────────────────────────────────────────────────
+[build.processing]
+  skip_processing = false
+
+[build.processing.html]
+  pretty_urls = true
+
+# ─────────────────────────────────────────────────────────────────────
+# Caching headers
+#   - HTML: short cache so content updates ship immediately on redeploy
+#   - CSS:  long cache (we can bust via filename if needed)
+# ─────────────────────────────────────────────────────────────────────
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/styles.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# ─────────────────────────────────────────────────────────────────────
+# Legacy SPA hash redirects are handled client-side in index.html
+# (bpnguide.netlify.app/#RSA-5 → philly-zoning-districts.html#RSA-5)
+# because Netlify can't read/rewrite URL fragments server-side.
+# ─────────────────────────────────────────────────────────────────────
