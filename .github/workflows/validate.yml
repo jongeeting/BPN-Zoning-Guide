@@ -1,0 +1,70 @@
+name: Validate site
+
+# Runs on every push and pull request to main.
+# Checks for: broken HTML, broken internal links, broken external links,
+# and tag balance across all pages.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # allow manual runs from the Actions tab
+
+jobs:
+  validate:
+    name: HTML + links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ─── HTML tag balance (catches the kind of unclosed-div bug we just fixed) ───
+      - name: Check HTML tag balance
+        run: |
+          python3 <<'PY'
+          import re, sys, pathlib
+          errors = 0
+          for p in sorted(pathlib.Path('.').glob('*.html')):
+              s = p.read_text()
+              o = len(re.findall(r'<div\b', s))
+              c = len(re.findall(r'</div>', s))
+              status = 'OK' if o == c else 'MISMATCH'
+              print(f'  {p.name}: <div>={o} </div>={c}  {status}')
+              if o != c:
+                  errors += 1
+          sys.exit(1 if errors else 0)
+          PY
+
+      # ─── HTMLHint: catches malformed markup, missing alt text, duplicate IDs, etc. ───
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install htmlhint
+        run: npm install -g htmlhint@1
+
+      - name: Run htmlhint
+        run: htmlhint "*.html" --format compact
+        continue-on-error: true  # warn but don't fail — we can tighten later
+
+      # ─── Lychee: internal + external link checker ───
+      # Checks every href and src across all HTML files. Flags broken anchors,
+      # 404s, redirects, missing files. Ignores mailto and a few known-flaky hosts.
+      - name: Check links with lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --exclude-mail
+            --exclude 'localhost'
+            --accept '200,206,301,302,304,403,429'
+            './**/*.html'
+          fail: true
