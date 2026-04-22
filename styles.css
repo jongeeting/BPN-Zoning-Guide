@@ -138,10 +138,60 @@
     text-underline-offset: 3px;
   }
 
+  /* ── TOP BAR (persistent site nav) ── */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: var(--bpn-green);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    height: 52px;
+  }
+  .top-bar-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    margin-right: 16px;
+    padding-right: 16px;
+    border-right: 1px solid rgba(255,255,255,0.18);
+  }
+  .top-bar-logo svg { height: 28px; width: auto; display: block; }
+  .top-bar-nav {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+  }
+  .top-bar-nav::-webkit-scrollbar { display: none; }
+  .top-nav-link {
+    display: block;
+    padding: 0 14px;
+    height: 52px;
+    line-height: 52px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    position: relative;
+    top: 1px;
+    cursor: pointer;
+    transition: color .15s;
+  }
+  .top-nav-link:hover { color: rgba(255,255,255,0.88); }
+  .top-nav-link.active { color: #fff; border-bottom-color: rgba(255,255,255,0.7); }
+
   /* ── FILTER BAR ── */
   .filter-wrap {
     position: sticky;
-    top: 0;
+    top: 52px; /* stack below the sticky top-bar */
     z-index: 100;
     background: var(--bpn-white);
     border-bottom: 1px solid rgba(0,0,0,0.08);
