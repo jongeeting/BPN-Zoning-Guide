@@ -187,6 +187,18 @@
   }
   .top-nav-link:hover { color: rgba(255,255,255,0.88); }
   .top-nav-link.active { color: #fff; border-bottom-color: rgba(255,255,255,0.7); }
+  .top-nav-external {
+    color: rgba(255,255,255,0.88);
+    font-style: italic;
+  }
+  .top-nav-external:hover { color: #fff; }
+  .top-nav-sep {
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.2);
+    margin: 0 4px;
+    align-self: center;
+  }
 
   /* ── FILTER BAR ── */
   .filter-wrap {
